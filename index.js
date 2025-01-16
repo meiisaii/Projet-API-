@@ -69,7 +69,7 @@ app.post ("/api/users", (req, res) => {
     }
 
     const newUser = {
-        id: users.lenght + 1,
+        id: users.length + 1,
         name,
         email,
         password,
@@ -78,6 +78,7 @@ app.post ("/api/users", (req, res) => {
 // Ajouter l'utilisateur à la liste
     users.push(newUser);
 
+    res.status(201).json(newUser);
 });
 
 // Mettre à jour un utilisateur 
