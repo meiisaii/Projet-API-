@@ -13,6 +13,13 @@ const connexion = mysql.createConnection({
     database: 'user_db',
 });
 
+connexion.connect((err) => {
+    if (err) {
+        console.error("Erreur lors de la connexion avec mysql :", err.message);
+        process.exit(1);
+    }
+    console.log("Connexion avec la base de donnée réussie");
+})
 app.use(express.json());
 
 // DATA USERS
@@ -61,6 +68,12 @@ app.post ("/api/users", (req, res) => {
         return res.status(400).json({message : "Il manque une donnée."});
     }
 
+    const newUser = {
+        id: users.lenght + 1,
+        name,
+        email,
+        password,
+    };
 // Ajouter l'utilisateur à la liste
     users.push(newUser);
 
