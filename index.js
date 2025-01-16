@@ -12,23 +12,23 @@ app.use(express.json());
 const users = [
     {
         id: 1,
-        name: "Valentine",
-        email: "valentine@gmail.com",
-        age: 20,
+        name: "Meïssane",
+        email: "meissane@gmail.com",
+        age: 19,
     },
 
     {
         id: 2,
-        name: "Jason",
-        email: "jason@gmail.com",
-        age: 26,
+        name: "Elsa",
+        email: "elsa@gmail.com",
+        age: 20,
     },
 
     {
         id: 3,
-        name: "Sacha",
-        email: "sacha@gmail.com",
-        age: 22,
+        name: "Hugo",
+        email: "hugo@gmail.com",
+        age: 19,
     }
 ]
 
