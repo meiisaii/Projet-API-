@@ -1,8 +1,11 @@
+//Importation du module express
 const express = require ("express");
 const mysql = require ("mysql2");
 
+//Créer une app express
 const app = express();
 
+//Définition du port
 const port = 3000;
 
 app.use(express.json());
@@ -32,3 +35,31 @@ const users = [
     }
 ]
 
+//routes
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Ajouter un utilisateur 
+
+app.post ("/api/users", (req, res) => {
+    const { name,email,password } = req.body;
+
+    if ( !name || !email || !password ) {
+        return res.status(400).json({message : "Il manque une donnée."});
+    }
+
+// Ajouter l'utilisateur à la liste
+    users.push(newUser);
+
+});
