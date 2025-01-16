@@ -62,9 +62,9 @@ app.get("/api/users", (req, res) => {
 // Ajouter un utilisateur 
 
 app.post ("/api/users", (req, res) => {
-    const { name,email,password } = req.body;
+    const { name,email,password,age } = req.body;
 
-    if ( !name || !email || !password ) {
+    if ( !name || !email || !password || !age) {
         return res.status(400).json({message : "Il manque une donnée."});
     }
 
@@ -73,6 +73,7 @@ app.post ("/api/users", (req, res) => {
         name,
         email,
         password,
+        age,
     };
 // Ajouter l'utilisateur à la liste
     users.push(newUser);
