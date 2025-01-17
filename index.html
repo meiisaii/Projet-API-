@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interface API Utilisateurs</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -33,7 +33,7 @@
                     <label for="password">Mot de passe</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit">Ajouter</button>
+                <button type="submit" onclick="app.post()">Ajouter</button>
             </form>
         </div>
 
@@ -72,6 +72,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="index.js" defer></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 //Importation du module express
-const express = require ("express");
-const mysql = require ("mysql2");
+const express = require("express");
+const mysql = require("mysql2");
 
 //Créer une app express
 const app = express();
@@ -19,7 +19,8 @@ connexion.connect((err) => {
         process.exit(1);
     }
     console.log("Connexion avec la base de donnée réussie");
-})
+});
+
 app.use(express.json());
 
 // DATA USERS
@@ -62,7 +63,7 @@ app.get("/api/users", (req, res) => {
 // Ajouter un utilisateur 
 
 app.post ("/api/users", (req, res) => {
-    const { name,email,password,age } = req.body;
+    const { name, email, password, age } = req.body;
 
     if ( !name || !email || !password || !age) {
         return res.status(400).json({message : "Il manque une donnée."});
@@ -84,9 +85,8 @@ app.post ("/api/users", (req, res) => {
 // Mettre à jour un utilisateur 
 
 app.put("/api/users/:id", (req, res) => {
-    const userId = parseInt(req.params.id); //Extraire l'id de l'utilisateur depuis les param de la req
-    const existingUser = users.find((user) => user.id === userId); //Trouver l'utilisateur correspondant à l'ID de la req
- 
+    const userId = parseInt(req.params.id, 10); 
+    const existingUser = users.find((user) => user.id === userId); 
     if (existingUser) {
         existingUser.name = req.body.name || existingUser.name;
         existingUser.email = req.body.email || existingUser.email;
@@ -99,7 +99,7 @@ app.put("/api/users/:id", (req, res) => {
 
 //route pour supprimer un utilisateur
 app.delete("/api/users/:id", (req, res) => {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
 
     if (!userId) {
         return res.status(400).json({ message: "un ID d'utilisateur requis" });
@@ -111,12 +111,12 @@ app.delete("/api/users/:id", (req, res) => {
         if (error) {
             return res.status(500).json({ message: "Erreur de suppression", error });
         }
-        
-        if (result.affectedRows === 0) {
+
+        if (!result || result.affectedRows === 0) {
             return res.status(404).json({ message: "Utilisateur non trouvé !" });
         }
 
-        res.status(200).json({ message: "Utilisateur supprimé :/"});
+        res.status(200).json({ message: "Utilisateur supprimé avec succès"});
     });
 });
 
