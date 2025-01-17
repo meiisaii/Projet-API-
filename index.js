@@ -1,11 +1,11 @@
-//Importation du module express
+// Importation des modules nécessaires
 const express = require("express");
 const mysql = require("mysql2");
 
-//Créer une app express
+// Créer une app express
 const app = express();
 
-//connexion mysql
+// Connexion MySQL
 const connexion = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -13,118 +13,108 @@ const connexion = mysql.createConnection({
     database: 'user_db',
 });
 
-connexion.connect((err) => {
+// Connexion à la base de données
+connexion.connect((err) => { 
     if (err) {
-        console.error("Erreur lors de la connexion avec mysql :", err.message);
+        console.error("Erreur lors de la connexion avec MySQL :", err.message);
         process.exit(1);
     }
-    console.log("Connexion avec la base de donnée réussie");
+    console.log("Connexion avec la base de données réussie");
 });
 
-app.use(express.json());
+app.use(express.json()); // Middleware pour parser le JSON
 
-// DATA USERS
 
-const users = [
-    {
-        id: 1,
-        name: "Meïssane",
-        email: "meissane@gmail.com",
-        age: 19,
-    },
-
-    {
-        id: 2,
-        name: "Elsa",
-        email: "elsa@gmail.com",
-        age: 20,
-    },
-
-    {
-        id: 3,
-        name: "Hugo",
-        email: "hugo@gmail.com",
-        age: 19,
-    }
-]
-
-//routes
-//route d'origine
+// Route d'origine
 app.get("/", (req, res) => {
     res.send("Bienvenue sur notre API :)");
 });
 
-//route pour récupérer la liste des utilisateurs
+// Route pour récupérer la liste des utilisateurs
 app.get("/api/users", (req, res) => {
-    res.json(users);
-});
+    const query = "SELECT * FROM users";
 
-
-// Ajouter un utilisateur 
-
-app.post ("/api/users", (req, res) => {
-    const { name, email, password, age } = req.body;
-
-    if ( !name || !email || !password || !age) {
-        return res.status(400).json({message : "Il manque une donnée."});
-    }
-
-    const newUser = {
-        id: users.length + 1,
-        name,
-        email,
-        password,
-        age,
-    };
-// Ajouter l'utilisateur à la liste
-    users.push(newUser);
-
-    res.status(201).json(newUser);
-});
-
-// Mettre à jour un utilisateur 
-
-app.put("/api/users/:id", (req, res) => {
-    const userId = parseInt(req.params.id, 10); 
-    const existingUser = users.find((user) => user.id === userId); 
-    if (existingUser) {
-        existingUser.name = req.body.name || existingUser.name;
-        existingUser.email = req.body.email || existingUser.email;
-        existingUser.age = req.body.age || existingUser.age;
-        res.json(existingUser);
-    } else {
-        res.status(404).json({ message: "Utilisateur non trouvé" });
-    }
-});
-
-//route pour supprimer un utilisateur
-app.delete("/api/users/:id", (req, res) => {
-    const userId = parseInt(req.params.id);
-
-    if (!userId) {
-        return res.status(400).json({ message: "un ID d'utilisateur requis" });
-    }
-
-    const query = 'DELETE FROM users WHERE id = ?';
-
-    connexion.query(query, [userId], (error, result) => {
+    connexion.query(query, (error, results) => {
         if (error) {
-            return res.status(500).json({ message: "Erreur de suppression", error });
+            return res.status(500).json({ message: "Erreur lors de la récupération des utilisateurs", error });
         }
-
-        if (!result || result.affectedRows === 0) {
-            return res.status(404).json({ message: "Utilisateur non trouvé !" });
-        }
-
-        res.status(200).json({ message: "Utilisateur supprimé avec succès"});
+        res.status(200).json(results);
     });
 });
 
+// Route pour ajouter un utilisateur
+app.post("/api/users", (req, res) => {
+    const { name, email, password, age } = req.body;
 
+    if (!name || !email || !password || !age) {
+        return res.status(400).json({ message: "Il manque une donnée." });
+    }
 
+    const query = "INSERT INTO users (name, email, password, age) VALUES (?, ?, ?, ?)";
+    const values = [name, email, password, age];
 
+    connexion.query(query, values, (error, result) => {
+        if (error) {
+            return res.status(500).json({ message: "Erreur lors de l'ajout de l'utilisateur", error });
+        }
 
-//définition du port et démarrage du serveur
+        res.status(201).json({
+            id: result.insertId,
+            name,
+            email,
+            age,
+        });
+    });
+});
+
+// Route pour mettre à jour un utilisateur
+app.put("/api/users/:id", (req, res) => {
+    const userId = Number(req.params.id);
+
+    if (isNaN(userId) || userId <= 0) {
+        return res.status(400).json({ message: "ID d'utilisateur invalide ou manquant." });
+    }
+
+    const { name, email, age } = req.body;
+    const query = "UPDATE users SET name = ?, email = ?, age = ? WHERE id = ?";
+    const values = [name || null, email || null, age || null, userId];
+
+    connexion.query(query, values, (error, result) => {
+        if (error) {
+            return res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur", error });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Utilisateur non trouvé !" });
+        }
+
+        res.status(200).json({ message: "Utilisateur mis à jour avec succès" });
+    });
+});
+
+// Route pour supprimer un utilisateur
+app.delete("/api/users/:id", (req, res) => {
+    const userId = Number(req.params.id);
+
+    if (isNaN(userId) || userId <= 0) {
+        return res.status(400).json({ message: "ID d'utilisateur invalide ou manquant." });
+    }
+
+    const query = "DELETE FROM users WHERE id = ?";
+    connexion.query(query, [userId], (error, result) => {
+        if (error) {
+            return res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur", error });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Utilisateur non trouvé !" });
+        }
+
+        res.status(200).json({ message: "Utilisateur supprimé avec succès" });
+    });
+});
+
+// Définition du port et démarrage du serveur
 const port = 3000;
 app.listen(port, () => {
     console.log(`Serveur en écoute sur http://localhost:${port}`);
