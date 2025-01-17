@@ -16,10 +16,10 @@ const connexion = mysql.createConnection({
 // Connexion à la base de données
 connexion.connect((err) => { 
     if (err) {
-        console.error("Erreur lors de la connexion avec MySQL :", err.message);
+        console.error("Erreur pendant la connexion :", err.message);
         process.exit(1);
     }
-    console.log("Connexion avec la base de données réussie");
+    console.log("Connexion réussie !");
 });
 
 app.use(express.json()); // Middleware pour parser le JSON
@@ -47,7 +47,7 @@ app.post("/api/users", (req, res) => {
     const { name, email, password, age } = req.body;
 
     if (!name || !email || !password || !age) {
-        return res.status(400).json({ message: "Il manque une donnée." });
+        return res.status(400).json({ message: "Il manque une donnée" });
     }
 
     const query = "INSERT INTO users (name, email, password, age) VALUES (?, ?, ?, ?)";
@@ -72,7 +72,7 @@ app.put("/api/users/:id", (req, res) => {
     const userId = Number(req.params.id);
 
     if (isNaN(userId) || userId <= 0) {
-        return res.status(400).json({ message: "ID d'utilisateur invalide ou manquant." });
+        return res.status(400).json({ message: "ID d'utilisateur invalide ou manquant" });
     }
 
     const { name, email, age } = req.body;

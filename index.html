@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interface API Utilisateurs</title>
+    <title>Projet API</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Gestion des Utilisateurs</h1>
 
-        <!-- Liste des utilisateurs -->
         <div id="user-list">
             <h2>Liste des Utilisateurs</h2>
-            <button onclick="fetchUsers()">Charger les utilisateurs</button>
+            <button>Charger les utilisateurs</button>
             <ul id="users"></ul>
         </div>
 
-        <!-- Ajouter un utilisateur -->
         <div id="add-user">
             <h2>Ajouter un Utilisateur</h2>
             <form id="addUserForm">
@@ -37,11 +35,11 @@
                     <label for="age">Âge</label>
                     <input type="number" id="age" name="age" required>
                 </div>
-                <button type="button" onclick="addUser()">Ajouter</button>
+                <button type="button">Ajouter</button>
             </form>
         </div>
 
-        <!-- Mettre à jour un utilisateur -->
+
         <div id="update-user">
             <h2>Mettre à jour un Utilisateur</h2>
             <form id="updateUserForm">
@@ -61,11 +59,11 @@
                     <label for="update-age">Âge</label>
                     <input type="number" id="update-age" name="update-age">
                 </div>
-                <button type="button" onclick="updateUser()">Mettre à jour</button>
+                <button type="button">Mettre à jour</button>
             </form>
         </div>
 
-        <!-- Supprimer un utilisateur -->
+ 
         <div id="delete-user">
             <h2>Supprimer un Utilisateur</h2>
             <form id="deleteUserForm">
@@ -73,95 +71,7 @@
                     <label for="delete-id">ID de l'utilisateur</label>
                     <input type="number" id="delete-id" name="delete-id" required>
                 </div>
-                <button type="button" onclick="deleteUser()">Supprimer</button>
+                <button type="button">Supprimer</button>
             </form>
         </div>
     </div>
-
-    <script>
-        const apiUrl = "http://localhost:3000/api/users";
-
-        // Charger les utilisateurs
-        function fetchUsers() {
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(users => {
-                    const userList = document.getElementById("users");
-                    userList.innerHTML = "";
-                    users.forEach(user => {
-                        const li = document.createElement("li");
-                        li.textContent = `ID: ${user.id}, Nom: ${user.name}, Email: ${user.email}, Âge: ${user.age}`;
-                        userList.appendChild(li);
-                    });
-                })
-                .catch(error => console.error("Erreur lors de la récupération des utilisateurs :", error));
-        }
-
-        // Ajouter un utilisateur
-        function addUser() {
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const age = document.getElementById("age").value;
-
-            fetch(apiUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ name, email, password, age }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert("Utilisateur ajouté avec succès !");
-                    fetchUsers();
-                })
-                .catch(error => console.error("Erreur lors de l'ajout de l'utilisateur :", error));
-        }
-
-        // Mettre à jour un utilisateur
-        function updateUser() {
-            const id = document.getElementById("update-id").value;
-            const name = document.getElementById("update-name").value;
-            const email = document.getElementById("update-email").value;
-            const age = document.getElementById("update-age").value;
-
-            fetch(`${apiUrl}/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ name, email, age }),
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Utilisateur mis à jour avec succès !");
-                        fetchUsers();
-                    } else {
-                        alert("Erreur : Impossible de mettre à jour l'utilisateur.");
-                    }
-                })
-                .catch(error => console.error("Erreur lors de la mise à jour de l'utilisateur :", error));
-        }
-
-        // Supprimer un utilisateur
-        function deleteUser() {
-            const id = document.getElementById("delete-id").value;
-
-            fetch(`${apiUrl}/${id}`, {
-                method: "DELETE",
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Utilisateur supprimé avec succès !");
-                        fetchUsers();
-                    } else {
-                        alert("Erreur : Impossible de supprimer l'utilisateur.");
-                    }
-                })
-                .catch(error => console.error("Erreur lors de la suppression de l'utilisateur :", error));
-        }
-    </script>
-</body>
-</html>
-
